@@ -25,6 +25,16 @@
 #define SD_CS 5
 #define VIBRATE_PIN A0
 
+#define KB_UP    1
+#define KB_DOWN  2
+#define KB_LEFT  3
+#define KB_RIGHT 4
+#define KB_PUSH  5
+#define KB_F1    6
+#define KB_F2    11
+#define KB_F3    7
+#define KB_F4    12
+
 BBQ10Keyboard keyboard;
 Adafruit_ILI9341 tft(TFT_CS, TFT_DC);
 Adafruit_NeoPixel led(1, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -82,7 +92,7 @@ void setup()
     tft.println( "OK!" );
     delay( 1000 );
     tft.fillRect( 0, 0, 320, 240, BLACK );
-    drawSystemBar();
+    drawSystemBars();
     tft.setCursor( 0, 32 );
 
 }
@@ -96,8 +106,11 @@ void loop() {
 
         keyboardTimeout = 3000;
 
-        if( event.state == 3 )
+        if( event.state == 3 ) { // This should be an enum, but I'm damned if I can figure out how to reference the lib's one for this -JV
             tft.print( event.key );
+            tft.print( " " );
+            tft.println( (int)event.key, HEX );
+        }
     }
 
     if( keyboardTimeout > 0 ) {
@@ -135,12 +148,16 @@ inline void batteryIcon( uint16_t x, uint16_t y, uint16_t color ) {
     tft.drawLine( x+11, y+3, x+11, y+5, color );
 }
 
-void drawSystemBar() {
+void drawSystemBars() {
+    // Top bar
     tft.fillRect( 0, 0, 320, 9, color( 255, 0, 0 ) );
     tft.setCursor( 1, 1 );
 
     tft.print( "100%" );
     batteryIcon( 25, 0, BLACK );
+    
+    // Bottom bar
+    tft.fillRect( 0, 220, 320, 20, color( 0, 0, 255 ) );
 }
 
 void notificationBlink( uint8_t blinks ){
