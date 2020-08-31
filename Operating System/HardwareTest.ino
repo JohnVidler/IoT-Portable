@@ -4,6 +4,8 @@
 #include <BBQ10Keyboard.h>
 #include <SD.h>
 
+#include "icons.h"
+
 // Color definitions
 #define BLACK    0x0000
 #define BLUE     0x001F
@@ -95,6 +97,19 @@ void setup()
     drawSystemBars();
     tft.setCursor( 0, 32 );
 
+    for( uint8_t y=0; y<90; y++ ) {
+        for( uint8_t x=0; x<50; x++ ) {
+            uint16_t * cData = (uint16_t *)header_data;
+            tft.drawPixel( x, y+30, *(cData+(y*50)+x) );
+        }
+    }
+
+}
+
+void getPixelData( uint8_t * color, char * source, unsigned int offset ) {
+    color[0] = (((source[0] - 33) << 2) | ((source[1] - 33) >> 4));
+    color[1] = ((((source[1] - 33) & 0xF) << 4) | ((source[2] - 33) >> 2));
+    color[2] = ((((source[2] - 33) & 0x3) << 6) | ((source[3] - 33)));
 }
 
 int cycle = 0;
